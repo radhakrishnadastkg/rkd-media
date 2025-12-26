@@ -491,8 +491,10 @@
         }
 
         function populateCategoryFilter() {
-            const categories = [...new Set(recordings.map(r => r.category))].sort();
             const categoryFilter = document.getElementById('categoryFilter');
+            if (!categoryFilter) return;
+            
+            const categories = [...new Set(recordings.map(r => r.category))].sort();
             
             categoryFilter.innerHTML = '<option value="all">All Categories</option>';
             categories.forEach(cat => {
@@ -538,15 +540,21 @@
         }
 
         function filterRecordings() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const typeFilter = document.getElementById('typeFilter').value;
-            const categoryFilter = document.getElementById('categoryFilter').value;
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
+            
+            if (!searchInput || !typeFilter || !categoryFilter) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const categoryValue = categoryFilter.value;
             
             const filteredRecordings = recordings.filter(rec => {
                 const matchesSearch = rec.title.toLowerCase().includes(searchTerm) ||
                                     rec.location.toLowerCase().includes(searchTerm);
-                const matchesType = typeFilter === 'all' || rec.type === typeFilter;
-                const matchesCategory = categoryFilter === 'all' || rec.category === categoryFilter;
+                const matchesType = typeValue === 'all' || rec.type === typeValue;
+                const matchesCategory = categoryValue === 'all' || rec.category === categoryValue;
                 
                 return matchesSearch && matchesType && matchesCategory;
             });
