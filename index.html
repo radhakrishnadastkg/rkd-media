@@ -78,18 +78,6 @@
                 #ffd700 100%);
         }
 
-        .prabhupada-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid #ffd700;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            margin: 0 auto 15px;
-            object-fit: cover;
-            position: relative;
-            z-index: 1;
-        }
-
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -116,15 +104,25 @@
             flex-wrap: wrap;
         }
 
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
         .search-bar {
             flex: 1;
             min-width: 250px;
             position: relative;
         }
 
-        .filter-group {
+        .filters-row {
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         .sort-select, .filter-select {
@@ -516,10 +514,6 @@
 <body>
     <div class="container">
         <header>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/A._C._Bhaktivedanta_Swami_Prabhupada%2C_1977.jpg/440px-A._C._Bhaktivedanta_Swami_Prabhupada%2C_1977.jpg" 
-                 alt="Srila Prabhupada" 
-                 class="prabhupada-image"
-                 onerror="this.style.display='none'">
             <h1>H.G. Radha Krishna Das Media</h1>
             <p class="subtitle">Audio & Video Recordings</p>
         </header>
@@ -532,47 +526,51 @@
 
             <div id="mainContent" style="display: none;">
                 <div class="controls">
-                    <div class="search-bar">
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            class="search-input" 
-                            placeholder="Search recordings..."
-                            oninput="filterRecordings()"
-                        >
-                        <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="view-toggle">
-                        <button class="view-btn active" onclick="toggleView('grid')" id="gridViewBtn">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    <div class="controls-row">
+                        <div class="search-bar">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="search-input" 
+                                placeholder="Search recordings..."
+                                oninput="filterRecordings()"
+                            >
+                            <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            Grid
-                        </button>
-                        <button class="view-btn" onclick="toggleView('list')" id="listViewBtn">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                            List
-                        </button>
+                        </div>
+                        <div class="view-toggle">
+                            <button class="view-btn active" onclick="toggleView('grid')" id="gridViewBtn">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                </svg>
+                                Grid
+                            </button>
+                            <button class="view-btn" onclick="toggleView('list')" id="listViewBtn">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                                List
+                            </button>
+                        </div>
                     </div>
-                    <select id="typeFilter" class="filter-select" onchange="filterRecordings()">
-                        <option value="all">All Types</option>
-                        <option value="audio">Audio</option>
-                        <option value="youtube">YouTube</option>
-                    </select>
-                    <select id="categoryFilter" class="filter-select" onchange="filterRecordings()">
-                        <option value="all">All Categories</option>
-                    </select>
-                    <select id="sortSelect" class="sort-select" onchange="sortRecordings()">
-                        <option value="date-desc">Newest First</option>
-                        <option value="date-asc">Oldest First</option>
-                        <option value="title-asc">Title (A-Z)</option>
-                        <option value="title-desc">Title (Z-A)</option>
-                        <option value="location-asc">Location (A-Z)</option>
-                    </select>
+                    <div class="filters-row">
+                        <select id="typeFilter" class="filter-select" onchange="filterRecordings()">
+                            <option value="all">All Types</option>
+                            <option value="audio">Audio</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                        <select id="categoryFilter" class="filter-select" onchange="filterRecordings()">
+                            <option value="all">All Categories</option>
+                        </select>
+                        <select id="sortSelect" class="sort-select" onchange="sortRecordings()">
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="location-asc">Location (A-Z)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <ul class="audio-list" id="audioList"></ul>
