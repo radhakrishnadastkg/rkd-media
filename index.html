@@ -53,6 +53,7 @@
             gap: 15px;
             margin-bottom: 25px;
             align-items: stretch;
+            flex-wrap: wrap;
         }
 
         .search-bar {
@@ -61,7 +62,12 @@
             position: relative;
         }
 
-        .sort-select {
+        .filter-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sort-select, .filter-select {
             padding: 15px 15px;
             border: 2px solid #ddd;
             border-radius: 12px;
@@ -69,11 +75,11 @@
             background: white;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 160px;
+            min-width: 140px;
             height: 51px;
         }
 
-        .sort-select:focus {
+        .sort-select:focus, .filter-select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -133,6 +139,7 @@
             margin-bottom: 15px;
             font-size: 0.9em;
             color: #666;
+            flex-wrap: wrap;
         }
 
         .metadata-item {
@@ -144,6 +151,17 @@
         .metadata-item svg {
             width: 16px;
             height: 16px;
+            flex-shrink: 0;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
         }
 
         .audio-player {
@@ -369,8 +387,8 @@
                 <div class="setup-instructions">
                     <h3>📋 Setup Instructions</h3>
                     <ol>
-                        <li>Create a Google Sheet with these columns: <code>Title</code>, <code>Date</code>, <code>Location</code>, <code>URL</code>, <code>Type</code></li>
-                        <li>Fill in your recordings (Type should be either "audio" or "youtube")</li>
+                        <li>Create a Google Sheet with these columns: <code>Title</code>, <code>Date</code>, <code>Location</code>, <code>URL</code>, <code>Type</code>, <code>Category</code></li>
+                        <li>Fill in your recordings (Type should be either "audio" or "youtube", Category can be any text like "Lecture", "Kirtan", etc.)</li>
                         <li>Click <strong>File → Share → Publish to web</strong></li>
                         <li>Choose "Entire Document" and "Comma-separated values (.csv)"</li>
                         <li>Click "Publish" and copy the URL</li>
@@ -410,6 +428,7 @@
 
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
+                populateCategoryFilter();
                 renderAudioList(getSortedRecordings(recordings));
             } catch (error) {
                 console.error('Error loading sheet:', error);
@@ -431,7 +450,8 @@
                     date: values[1],
                     location: values[2],
                     url: values[3],
-                    type: values[4].toLowerCase()
+                    type: values[4].toLowerCase(),
+                    category: values[5] || 'Uncategorized'
                 };
 
                 if (recording.title && recording.url) {
@@ -470,6 +490,19 @@
             document.getElementById('errorMessage').textContent = message;
         }
 
+        function populateCategoryFilter() {
+            const categories = [...new Set(recordings.map(r => r.category))].sort();
+            const categoryFilter = document.getElementById('categoryFilter');
+            
+            categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categoryFilter.appendChild(option);
+            });
+        }
+
         function sortRecordings() {
             currentSort = document.getElementById('sortSelect').value;
             filterRecordings();
@@ -506,10 +539,18 @@
 
         function filterRecordings() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filteredRecordings = recordings.filter(rec => 
-                rec.title.toLowerCase().includes(searchTerm) ||
-                rec.location.toLowerCase().includes(searchTerm)
-            );
+            const typeFilter = document.getElementById('typeFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            const filteredRecordings = recordings.filter(rec => {
+                const matchesSearch = rec.title.toLowerCase().includes(searchTerm) ||
+                                    rec.location.toLowerCase().includes(searchTerm);
+                const matchesType = typeFilter === 'all' || rec.type === typeFilter;
+                const matchesCategory = categoryFilter === 'all' || rec.category === categoryFilter;
+                
+                return matchesSearch && matchesType && matchesCategory;
+            });
+            
             const sortedRecordings = getSortedRecordings(filteredRecordings);
             renderAudioList(sortedRecordings);
         }
@@ -557,6 +598,7 @@
                             </svg>
                             ${rec.location}
                         </span>
+                        <span class="category-badge">${rec.category}</span>
                     </div>
                 `;
                 
