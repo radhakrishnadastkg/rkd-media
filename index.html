@@ -78,6 +78,18 @@
                 #ffd700 100%);
         }
 
+        .prabhupada-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #ffd700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 15px;
+            object-fit: cover;
+            position: relative;
+            z-index: 1;
+        }
+
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -504,6 +516,10 @@
 <body>
     <div class="container">
         <header>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/A._C._Bhaktivedanta_Swami_Prabhupada%2C_1977.jpg/440px-A._C._Bhaktivedanta_Swami_Prabhupada%2C_1977.jpg" 
+                 alt="Srila Prabhupada" 
+                 class="prabhupada-image"
+                 onerror="this.style.display='none'">
             <h1>H.G. Radha Krishna Das Media</h1>
             <p class="subtitle">Audio & Video Recordings</p>
         </header>
