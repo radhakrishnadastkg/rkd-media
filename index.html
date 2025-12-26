@@ -158,6 +158,7 @@
             overflow: hidden;
             margin: 15px 0;
             border-radius: 8px;
+            background: #000;
         }
 
         .youtube-container iframe {
@@ -167,6 +168,64 @@
             width: 100%;
             height: 100%;
             border-radius: 8px;
+        }
+
+        .youtube-thumbnail {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+
+        .youtube-thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .youtube-thumbnail:hover::before {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .youtube-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 68px;
+            height: 48px;
+            background: rgba(255, 0, 0, 0.9);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .youtube-thumbnail:hover .youtube-play-button {
+            background: rgba(255, 0, 0, 1);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .youtube-play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-40%, -50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid white;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
         }
 
         .download-btn {
@@ -458,7 +517,11 @@
         function getYouTubeEmbedUrl(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = url.match(regExp);
-            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function getYouTubeThumbnail(videoId) {
+            return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
         }
 
         function renderAudioList(recordingsToRender = recordings) {
@@ -498,15 +561,16 @@
                 `;
                 
                 if (rec.type === 'youtube') {
-                    const embedUrl = getYouTubeEmbedUrl(rec.url);
+                    const videoId = getYouTubeEmbedUrl(rec.url);
+                    const thumbnail = getYouTubeThumbnail(videoId);
                     return `
                         <li class="audio-item">
                             <h3>${rec.title}</h3>
                             ${metadata}
-                            <div class="youtube-container">
-                                <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <div class="youtube-thumbnail" style="background-image: url('${thumbnail}')" onclick="window.open('${rec.url}', '_blank')">
+                                <div class="youtube-play-button"></div>
                             </div>
-                            <a href="${rec.url}" target="_blank" class="download-btn">Open in YouTube</a>
+                            <a href="${rec.url}" target="_blank" class="download-btn">Watch on YouTube</a>
                         </li>
                     `;
                 } else {
