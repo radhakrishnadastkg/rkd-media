@@ -454,12 +454,12 @@
                 if (values.length < 5) continue;
 
                 const recording = {
-                    title: values[0],
-                    date: values[1],
-                    location: values[2],
-                    url: values[3],
-                    type: values[4].toLowerCase(),
-                    category: values[5] || 'Uncategorized'
+                    title: values[0].trim(),
+                    date: values[1].trim(),
+                    location: values[2].trim(),
+                    url: values[3].trim(),
+                    type: values[4].trim().toLowerCase(),
+                    category: values[5] ? values[5].trim() : 'Uncategorized'
                 };
 
                 if (recording.title && recording.url) {
@@ -467,6 +467,7 @@
                 }
             }
 
+            console.log('Parsed recordings:', data);
             return data;
         }
 
@@ -549,19 +550,29 @@
 
         function filterRecordings() {
             const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
             
-            if (!searchInput) return;
+            if (!searchInput || !typeFilter || !categoryFilter) return;
             
             const searchTerm = searchInput.value.toLowerCase();
+            const typeValue = typeFilter.value;
+            const categoryValue = categoryFilter.value;
+            
+            console.log('Filtering with:', { searchTerm, typeValue, categoryValue });
             
             const filteredRecordings = recordings.filter(rec => {
                 const matchesSearch = rec.title.toLowerCase().includes(searchTerm) ||
                                     rec.location.toLowerCase().includes(searchTerm) ||
                                     rec.category.toLowerCase().includes(searchTerm) ||
                                     rec.date.toLowerCase().includes(searchTerm);
+                const matchesType = typeValue === 'all' || rec.type === typeValue;
+                const matchesCategory = categoryValue === 'all' || rec.category === categoryValue;
                 
-                return matchesSearch;
+                return matchesSearch && matchesType && matchesCategory;
             });
+            
+            console.log('Filtered results:', filteredRecordings.length);
             
             const sortedRecordings = getSortedRecordings(filteredRecordings);
             renderAudioList(sortedRecordings);
@@ -577,17 +588,18 @@
             return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
         }
 
-        function renderAudioList(recordingsToRender = recordings) {
+        function renderAudioList(recordingsToRender) {
             const list = document.getElementById('audioList');
             
             if (recordingsToRender.length === 0) {
-                const searchTerm = document.getElementById('searchInput').value;
+                const searchInput = document.getElementById('searchInput');
+                const searchTerm = searchInput ? searchInput.value : '';
                 list.innerHTML = `
                     <div class="empty-state">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
                         </svg>
-                        <p>${searchTerm ? 'No recordings found matching "' + searchTerm + '"' : 'No recordings yet. Add some to your Google Sheet!'}</p>
+                        <p>${searchTerm ? 'No recordings found matching your filters' : 'No recordings yet. Add some to your Google Sheet!'}</p>
                     </div>
                 `;
                 return;
