@@ -366,6 +366,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
+                    <select id="typeFilter" class="filter-select" onchange="filterRecordings()">
+                        <option value="all">All Types</option>
+                        <option value="audio">Audio</option>
+                        <option value="youtube">YouTube</option>
+                    </select>
+                    <select id="categoryFilter" class="filter-select" onchange="filterRecordings()">
+                        <option value="all">All Categories</option>
+                    </select>
                     <select id="sortSelect" class="sort-select" onchange="sortRecordings()">
                         <option value="date-desc">Newest First</option>
                         <option value="date-asc">Oldest First</option>
@@ -541,22 +549,18 @@
 
         function filterRecordings() {
             const searchInput = document.getElementById('searchInput');
-            const typeFilter = document.getElementById('typeFilter');
-            const categoryFilter = document.getElementById('categoryFilter');
             
-            if (!searchInput || !typeFilter || !categoryFilter) return;
+            if (!searchInput) return;
             
             const searchTerm = searchInput.value.toLowerCase();
-            const typeValue = typeFilter.value;
-            const categoryValue = categoryFilter.value;
             
             const filteredRecordings = recordings.filter(rec => {
                 const matchesSearch = rec.title.toLowerCase().includes(searchTerm) ||
-                                    rec.location.toLowerCase().includes(searchTerm);
-                const matchesType = typeValue === 'all' || rec.type === typeValue;
-                const matchesCategory = categoryValue === 'all' || rec.category === categoryValue;
+                                    rec.location.toLowerCase().includes(searchTerm) ||
+                                    rec.category.toLowerCase().includes(searchTerm) ||
+                                    rec.date.toLowerCase().includes(searchTerm);
                 
-                return matchesSearch && matchesType && matchesCategory;
+                return matchesSearch;
             });
             
             const sortedRecordings = getSortedRecordings(filteredRecordings);
